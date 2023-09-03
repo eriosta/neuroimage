@@ -5,6 +5,8 @@ from clustering import *
 from nilearn import datasets
 import streamlit as st
 import nilearn.datasets as datasets
+import psutil
+import os
     
 order_components = 20
 correlation_tool = ComponentCorrelation(n_order=order_components)
@@ -19,6 +21,35 @@ decomposition_key = {
     'Dictionary Learning':'dict_learning',
     'ICA':'ica'
 }
+
+def measure_resources(func):
+    def wrapper(*args, **kwargs):
+        # Measure memory before function
+        process = psutil.Process(os.getpid())
+        start_mem = process.memory_info().rss / 1024 ** 2  # Convert bytes to MB
+
+        # Measure CPU usage before function
+        start_cpu = time.process_time()
+
+
+        result = func(*args, **kwargs)
+
+        # Measure memory after function
+        end_mem = process.memory_info().rss / 1024 ** 2
+
+        # Measure CPU usage after function
+        end_cpu = time.process_time()
+
+
+        # Display in Streamlit
+        st.sidebar.info(f"Memory used by function `{func.__name__}`: {end_mem - start_mem:.2f} MB")
+        st.sidebar.info(f"CPU time used by function `{func.__name__}`: {end_cpu - start_cpu:.2f} seconds")
+        
+        return result
+    return wrapper
+
+# Add the @measure_resources decorator to functions you want to measure
+
 
 def main():
     # Introduction and Background
@@ -100,27 +131,27 @@ def main():
     # Add "Run" button
     run_button = st.sidebar.button("Run")
     
-    if run_button:
-        st.write(f"Visualizing component correlation with t = {t}")
-        
-        # Create a slider to adjust the significance level
-                
-        correlation_tool = ComponentCorrelation(n_order=order_components)  # Update correlation_tool with user-defined order_components
-        correlation_tool.visualize_component_correlation(streamlit=True,p_threshold=p_threshold,decomposition_type=decomposition_key[decomposition_type])
-        clusters = correlation_tool.extract_clusters(t=t)
-        
-        # Convert clusters dictionary to a DataFrame
+    def initialize_correlation_tool(order_components):
+        return ComponentCorrelation(n_order=order_components)
+
+    @measure_resources
+    def visualize_correlation(correlation_tool, p_threshold, decomposition_type, decomposition_key):
+        correlation_tool.visualize_component_correlation(streamlit=True, p_threshold=p_threshold, decomposition_type=decomposition_key[decomposition_type])
+        return correlation_tool.extract_clusters(t=t)
+
+    def create_clusters_dataframe(clusters):
         clusters_df = pd.DataFrame([(cluster_id, component_indices) for cluster_id, component_indices in clusters.items()], columns=['Cluster', 'Component Indices'])
         clusters_df['Component Indices'] = clusters_df['Component Indices'].apply(lambda x: ', '.join(map(str, x)))
-        
-        # Display clusters in Streamlit with expandable sections
+        return clusters_df
+
+    def display_clusters(clusters):
         st.write("Clusters:")
         for cluster_id, component_indices in clusters.items():
             with st.expander(f"Cluster {cluster_id}"):
                 st.write("**Component Indices:**", ', '.join(map(str, component_indices)))
 
-        
-        # Display images corresponding to each cluster
+    @measure_resources
+    def process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key):
         for i, func_file in enumerate(func_filenames):
             for cluster_id, component_indices in clusters.items():
                 st.write(f"Visualizing components for cluster {cluster_id}")
@@ -129,11 +160,20 @@ def main():
                 st.write("Processing and visualizing components...")
                 
                 start_time = time.time()  # Start measuring time
-                visualizer.process_and_visualize(streamlit=True,decomposition_type=decomposition_key[decomposition_type])
+                visualizer.process_and_visualize(streamlit=True, decomposition_type=decomposition_key[decomposition_type])
                 end_time = time.time()  # Stop measuring time
                 
                 elapsed_time = end_time - start_time
                 st.write(f"Time taken: {elapsed_time:.2f} seconds")
-            
+        
+    if run_button:
+        st.write(f"Visualizing component correlation with t = {t}")
+        
+        correlation_tool = initialize_correlation_tool(order_components)
+        clusters = visualize_correlation(correlation_tool, p_threshold, decomposition_type, decomposition_key)
+        clusters_df = create_clusters_dataframe(clusters)
+        display_clusters(clusters)
+        process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key)
+
 if __name__ == "__main__":
     main()
