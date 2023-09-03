@@ -8,6 +8,7 @@ from scipy.cluster.hierarchy import leaves_list, linkage
 from scipy.cluster.hierarchy import fcluster
 import streamlit as st
 from nilearn.decomposition import CanICA, DictLearning
+from joblib import Parallel, delayed
 
 class ComponentCorrelation:
     def __init__(self, n_order, memory_level=2, cache_dir="nilearn_cache"):
@@ -28,9 +29,9 @@ class ComponentCorrelation:
             "memory_level": self.memory_level
         }
         if decomposition_type == 'dict_learning':
-            decomposition_model = DictLearning(n_components=self.n_order, **options)
+            decomposition_model = DictLearning(n_components=self.n_order, **options, n_jobs=-1)
         elif decomposition_type == 'ica':
-            decomposition_model = CanICA(n_components=self.n_order, **options)
+            decomposition_model = CanICA(n_components=self.n_order, **options, n_jobs=-1)
         else:
             raise ValueError("Invalid decomposition_type. Choose 'dict_learning' or 'ica'.")
             
@@ -125,9 +126,9 @@ class ComponentVisualization:
     def apply_decomposition(self, decomposition_type='dict_learning'):
         fmri_subject = image.smooth_img(self.func_file, self.fwhm)
         if decomposition_type == 'dict_learning':
-            decomposition_model = DictLearning(n_components=self.n_components, random_state=0)
+            decomposition_model = DictLearning(n_components=self.n_components, random_state=0, n_jobs=-1)
         elif decomposition_type == 'ica':
-            decomposition_model = CanICA(n_components=self.n_components, random_state=0)
+            decomposition_model = CanICA(n_components=self.n_components, random_state=0, n_jobs=-1)
         else:
             raise ValueError("Invalid decomposition_type. Choose 'dict_learning' or 'ica'.")
             
@@ -159,4 +160,5 @@ class ComponentVisualization:
     def process_and_visualize(self,streamlit,decomposition_type):
         self.apply_decomposition(decomposition_type)
         self.visualize_components(streamlit)
+
 
