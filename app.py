@@ -183,7 +183,7 @@ def main():
             for t in [1, 2.5, 5]:
                 clusters = correlation_tool.extract_clusters(t=t)
                 for cluster_id, component_indices in clusters.items():
-                    with st.beta_container():
+                    with st.container():
                         cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                         st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
                         st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
