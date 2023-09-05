@@ -185,6 +185,8 @@ def main():
                 for cluster_id, component_indices in clusters.items():
                     cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                     st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
+                    st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
+                    st.button("Next")
 
 if __name__ == "__main__":
     main()
