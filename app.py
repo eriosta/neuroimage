@@ -180,14 +180,19 @@ def main():
 
         if label_clusters:
             cluster_labels = ['Left Hemisphere','Right Hemisphere','Background', 'Frontal Pole', 'Insular Cortex', 'Superior Frontal Gyrus', 'Middle Frontal Gyrus', 'Inferior Frontal Gyrus, pars triangularis', 'Inferior Frontal Gyrus, pars opercularis', 'Precentral Gyrus', 'Temporal Pole', 'Superior Temporal Gyrus, anterior division', 'Superior Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, anterior division', 'Middle Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, temporooccipital part', 'Inferior Temporal Gyrus, anterior division', 'Inferior Temporal Gyrus, posterior division', 'Inferior Temporal Gyrus, temporooccipital part', 'Postcentral Gyrus', 'Superior Parietal Lobule', 'Supramarginal Gyrus, anterior division', 'Supramarginal Gyrus, posterior division', 'Angular Gyrus', 'Lateral Occipital Cortex, superior division', 'Lateral Occipital Cortex, inferior division', 'Intracalcarine Cortex', 'Frontal Medial Cortex', 'Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)', 'Subcallosal Cortex', 'Paracingulate Gyrus', 'Cingulate Gyrus, anterior division', 'Cingulate Gyrus, posterior division', 'Precuneous Cortex', 'Cuneal Cortex', 'Frontal Orbital Cortex', 'Parahippocampal Gyrus, anterior division', 'Parahippocampal Gyrus, posterior division', 'Lingual Gyrus', 'Temporal Fusiform Cortex, anterior division', 'Temporal Fusiform Cortex, posterior division', 'Temporal Occipital Fusiform Cortex', 'Occipital Fusiform Gyrus', 'Frontal Operculum Cortex', 'Central Opercular Cortex', 'Parietal Operculum Cortex', 'Planum Polare', "Heschl's Gyrus (includes H1 and H2)", 'Planum Temporale', 'Supracalcarine Cortex', 'Occipital Pole']
+            labeled_clusters = pd.DataFrame(columns=['t', 'Cluster ID', 'Label', 'Component Indices'])
             for t in [1, 2.5, 5]:
                 clusters = correlation_tool.extract_clusters(t=t)
                 for cluster_id, component_indices in clusters.items():
-                    with st.container():
+                    while True:
                         cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                         st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
                         st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
-                        st.button("Next", key=f'next_button_{t}_{cluster_id}')
+                        if st.button("Confirm", key=f'confirm_button_{t}_{cluster_id}'):
+                            labeled_clusters = labeled_clusters.append({'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}, ignore_index=True)
+                            break
+            labeled_clusters.to_csv('labeled_clusters.csv', index=False)
+            st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
 
 if __name__ == "__main__":
     main()
