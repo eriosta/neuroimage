@@ -189,17 +189,20 @@ def main():
                     for cluster_id, component_indices in clusters.items():
                         cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                         labeled_clusters.loc[len(labeled_clusters)] = {'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}
-                
-                submit_button = st.button(label='Submit')
+                        # Add labeled_clusters to the session state
+
+                st.session_state['labeled_clusters'] = labeled_clusters
+                        
+                submit_button = st.form_submit_button(label='Submit')
                 
                 if submit_button:
-                    labeled_clusters.to_csv('labeled_clusters.csv', index=False)
-                    st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
+                    st.session_state['labeled_clusters'] = labeled_clusters
 
-                exit_button = st.form_submit_button(label='Exit')
-                
-                if exit_button:
-                    st.stop()
+            # Save CSV and provide download button outside the form
+            if 'labeled_clusters' in st.session_state:
+                labeled_clusters = st.session_state['labeled_clusters']
+                labeled_clusters.to_csv('labeled_clusters.csv', index=False)
+                st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
 
 
 if __name__ == "__main__":
