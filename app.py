@@ -190,11 +190,17 @@ def main():
                         cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                         labeled_clusters.loc[len(labeled_clusters)] = {'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}
                 
-                submit_button = st.form_submit_button(label='Submit')
+                submit_button = st.button(label='Submit')
                 
                 if submit_button:
                     labeled_clusters.to_csv('labeled_clusters.csv', index=False)
                     st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
+
+                exit_button = st.button(label='Exit')
+                
+                if exit_button:
+                    st.stop()
+
 
 if __name__ == "__main__":
     main()
