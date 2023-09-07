@@ -196,7 +196,7 @@ def main():
                     labeled_clusters.to_csv('labeled_clusters.csv', index=False)
                     st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
 
-                exit_button = st.button(label='Exit')
+                exit_button = st.form_submit_button(label='Exit')
                 
                 if exit_button:
                     st.stop()
