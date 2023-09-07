@@ -52,7 +52,6 @@ def measure_resources(func):
 
 def main():
     # Introduction and Background
-    st.title("Subject-Level Functional Network Analysis")
     st.info(
         """
         Welcome to the Subject-Level Functional Network Analysis App! This tool is designed to 
