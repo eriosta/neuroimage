@@ -21,28 +21,22 @@ decomposition_key = {
     'Dictionary Learning':'dict_learning',
     'ICA':'ica'
 }
+
 def measure_resources(func):
     def wrapper(*args, **kwargs):
         # Measure memory before function
         process = psutil.Process(os.getpid())
         start_mem = process.memory_info().rss / 1024 ** 2  # Convert bytes to MB
-
         # Measure CPU usage before function
         start_cpu = time.process_time()
-
-
         result = func(*args, **kwargs)
-
         # Measure memory after function
         end_mem = process.memory_info().rss / 1024 ** 2
-
         # Measure CPU usage after function
         end_cpu = time.process_time()
-
-
-        # Display in Streamlit as a toast
-        st.toast("Memory used by function `{func.__name__}`: {end_mem - start_mem:.2f} MB")
-        st.toast("CPU time used by function `{func.__name__}`: {end_cpu - start_cpu:.2f} seconds")
+        # Display in Streamlit
+        st.toast(f"Memory used by function `{func.__name__}`: {end_mem - start_mem:.2f} MB")
+        st.toast(f"CPU time used by function `{func.__name__}`: {end_cpu - start_cpu:.2f} seconds")
         
         return result
     return wrapper
