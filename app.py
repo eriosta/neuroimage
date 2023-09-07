@@ -166,7 +166,16 @@ def main():
                 
                 elapsed_time = end_time - start_time
                 st.write(f"Time taken: {elapsed_time:.2f} seconds")
-        
+
+    def generate_html_string(func_filenames, clusters, order_components, fwhm):
+        html_string = ""
+        # Loop over the func_filenames to get the base64 strings of the images and add them to the HTML string
+        for i, _ in enumerate(func_filenames):
+            visualizer = ComponentVisualization(func_filenames[i], order_components, clusters[i], fwhm, i)
+            image_base64_string = visualizer.get_image_base64_string()
+            html_string += f'<img src="data:image/png;base64,{image_base64_string}" alt="Component {i}">'
+        return html_string
+
     if run_button:
         st.header("Starting analysis...")
         st.write(f"Visualizing component correlation with t = {t}")
@@ -176,22 +185,35 @@ def main():
         clusters_df = create_clusters_dataframe(clusters)
         display_clusters(clusters)
         process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key)
+        
+        # HTML
 
-        if label_clusters:
-            cluster_labels = ['Left Hemisphere','Right Hemisphere','Background', 'Frontal Pole', 'Insular Cortex', 'Superior Frontal Gyrus', 'Middle Frontal Gyrus', 'Inferior Frontal Gyrus, pars triangularis', 'Inferior Frontal Gyrus, pars opercularis', 'Precentral Gyrus', 'Temporal Pole', 'Superior Temporal Gyrus, anterior division', 'Superior Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, anterior division', 'Middle Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, temporooccipital part', 'Inferior Temporal Gyrus, anterior division', 'Inferior Temporal Gyrus, posterior division', 'Inferior Temporal Gyrus, temporooccipital part', 'Postcentral Gyrus', 'Superior Parietal Lobule', 'Supramarginal Gyrus, anterior division', 'Supramarginal Gyrus, posterior division', 'Angular Gyrus', 'Lateral Occipital Cortex, superior division', 'Lateral Occipital Cortex, inferior division', 'Intracalcarine Cortex', 'Frontal Medial Cortex', 'Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)', 'Subcallosal Cortex', 'Paracingulate Gyrus', 'Cingulate Gyrus, anterior division', 'Cingulate Gyrus, posterior division', 'Precuneous Cortex', 'Cuneal Cortex', 'Frontal Orbital Cortex', 'Parahippocampal Gyrus, anterior division', 'Parahippocampal Gyrus, posterior division', 'Lingual Gyrus', 'Temporal Fusiform Cortex, anterior division', 'Temporal Fusiform Cortex, posterior division', 'Temporal Occipital Fusiform Cortex', 'Occipital Fusiform Gyrus', 'Frontal Operculum Cortex', 'Central Opercular Cortex', 'Parietal Operculum Cortex', 'Planum Polare', "Heschl's Gyrus (includes H1 and H2)", 'Planum Temporale', 'Supracalcarine Cortex', 'Occipital Pole']
-            labeled_clusters = pd.DataFrame(columns=['t', 'Cluster ID', 'Label', 'Component Indices'])
-            for t in [1, 2.5, 5]:
-                clusters = correlation_tool.extract_clusters(t=t)
-                for cluster_id, component_indices in clusters.items():
-                    while True:
-                        cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
-                        st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
-                        st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
-                        if st.button("Confirm", key=f'confirm_button_{t}_{cluster_id}'):
-                            labeled_clusters = labeled_clusters.append({'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}, ignore_index=True)
-                            break
-            labeled_clusters.to_csv('labeled_clusters.csv', index=False)
-            st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
+        html_string = generate_html_string(func_filenames, clusters, order_components, fwhm)
+
+        # Write the HTML string to an HTML file
+        with open("components.html", "w") as html_file:
+            html_file.write(html_string)
+
+        # Provide a download link for the HTML file
+        st.sidebar.download_button(label="Download HTML", data=html_string, file_name='components.html', mime='text/html')
+
+
+
+        # if label_clusters:
+        #     cluster_labels = ['Left Hemisphere','Right Hemisphere','Background', 'Frontal Pole', 'Insular Cortex', 'Superior Frontal Gyrus', 'Middle Frontal Gyrus', 'Inferior Frontal Gyrus, pars triangularis', 'Inferior Frontal Gyrus, pars opercularis', 'Precentral Gyrus', 'Temporal Pole', 'Superior Temporal Gyrus, anterior division', 'Superior Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, anterior division', 'Middle Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, temporooccipital part', 'Inferior Temporal Gyrus, anterior division', 'Inferior Temporal Gyrus, posterior division', 'Inferior Temporal Gyrus, temporooccipital part', 'Postcentral Gyrus', 'Superior Parietal Lobule', 'Supramarginal Gyrus, anterior division', 'Supramarginal Gyrus, posterior division', 'Angular Gyrus', 'Lateral Occipital Cortex, superior division', 'Lateral Occipital Cortex, inferior division', 'Intracalcarine Cortex', 'Frontal Medial Cortex', 'Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)', 'Subcallosal Cortex', 'Paracingulate Gyrus', 'Cingulate Gyrus, anterior division', 'Cingulate Gyrus, posterior division', 'Precuneous Cortex', 'Cuneal Cortex', 'Frontal Orbital Cortex', 'Parahippocampal Gyrus, anterior division', 'Parahippocampal Gyrus, posterior division', 'Lingual Gyrus', 'Temporal Fusiform Cortex, anterior division', 'Temporal Fusiform Cortex, posterior division', 'Temporal Occipital Fusiform Cortex', 'Occipital Fusiform Gyrus', 'Frontal Operculum Cortex', 'Central Opercular Cortex', 'Parietal Operculum Cortex', 'Planum Polare', "Heschl's Gyrus (includes H1 and H2)", 'Planum Temporale', 'Supracalcarine Cortex', 'Occipital Pole']
+        #     labeled_clusters = pd.DataFrame(columns=['t', 'Cluster ID', 'Label', 'Component Indices'])
+        #     for t in [1, 2.5, 5]:
+        #         clusters = correlation_tool.extract_clusters(t=t)
+        #         for cluster_id, component_indices in clusters.items():
+        #             while True:
+        #                 cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
+        #                 st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
+        #                 st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
+        #                 if st.button("Confirm", key=f'confirm_button_{t}_{cluster_id}'):
+        #                     labeled_clusters = labeled_clusters.append({'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}, ignore_index=True)
+        #                     break
+        #     labeled_clusters.to_csv('labeled_clusters.csv', index=False)
+        #     st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
 
 if __name__ == "__main__":
     main()
