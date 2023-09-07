@@ -174,28 +174,28 @@ def main():
 if __name__ == "__main__":
     main()
     
-if 'label_clusters' in st.session_state:
-    with st.form(key='my_form'):
-        st.write("Fill out the form then press 'Submit' when you're done:")
-        cluster_labels = ['','Left Hemisphere','Right Hemisphere','Background', 'Frontal Pole', 'Insular Cortex', 'Superior Frontal Gyrus', 'Middle Frontal Gyrus', 'Inferior Frontal Gyrus, pars triangularis', 'Inferior Frontal Gyrus, pars opercularis', 'Precentral Gyrus', 'Temporal Pole', 'Superior Temporal Gyrus, anterior division', 'Superior Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, anterior division', 'Middle Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, temporooccipital part', 'Inferior Temporal Gyrus, anterior division', 'Inferior Temporal Gyrus, posterior division', 'Inferior Temporal Gyrus, temporooccipital part', 'Postcentral Gyrus', 'Superior Parietal Lobule', 'Supramarginal Gyrus, anterior division', 'Supramarginal Gyrus, posterior division', 'Angular Gyrus', 'Lateral Occipital Cortex, superior division', 'Lateral Occipital Cortex, inferior division', 'Intracalcarine Cortex', 'Frontal Medial Cortex', 'Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)', 'Subcallosal Cortex', 'Paracingulate Gyrus', 'Cingulate Gyrus, anterior division', 'Cingulate Gyrus, posterior division', 'Precuneous Cortex', 'Cuneal Cortex', 'Frontal Orbital Cortex', 'Parahippocampal Gyrus, anterior division', 'Parahippocampal Gyrus, posterior division', 'Lingual Gyrus', 'Temporal Fusiform Cortex, anterior division', 'Temporal Fusiform Cortex, posterior division', 'Temporal Occipital Fusiform Cortex', 'Occipital Fusiform Gyrus', 'Frontal Operculum Cortex', 'Central Opercular Cortex', 'Parietal Operculum Cortex', 'Planum Polare', "Heschl's Gyrus (includes H1 and H2)", 'Planum Temporale', 'Supracalcarine Cortex', 'Occipital Pole']
-        labeled_clusters = pd.DataFrame(columns=['t', 'Cluster ID', 'Label', 'Component Indices'])
+# if 'label_clusters' in st.session_state:
+#     with st.form(key='my_form'):
+#         st.write("Fill out the form then press 'Submit' when you're done:")
+#         cluster_labels = ['','Left Hemisphere','Right Hemisphere','Background', 'Frontal Pole', 'Insular Cortex', 'Superior Frontal Gyrus', 'Middle Frontal Gyrus', 'Inferior Frontal Gyrus, pars triangularis', 'Inferior Frontal Gyrus, pars opercularis', 'Precentral Gyrus', 'Temporal Pole', 'Superior Temporal Gyrus, anterior division', 'Superior Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, anterior division', 'Middle Temporal Gyrus, posterior division', 'Middle Temporal Gyrus, temporooccipital part', 'Inferior Temporal Gyrus, anterior division', 'Inferior Temporal Gyrus, posterior division', 'Inferior Temporal Gyrus, temporooccipital part', 'Postcentral Gyrus', 'Superior Parietal Lobule', 'Supramarginal Gyrus, anterior division', 'Supramarginal Gyrus, posterior division', 'Angular Gyrus', 'Lateral Occipital Cortex, superior division', 'Lateral Occipital Cortex, inferior division', 'Intracalcarine Cortex', 'Frontal Medial Cortex', 'Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)', 'Subcallosal Cortex', 'Paracingulate Gyrus', 'Cingulate Gyrus, anterior division', 'Cingulate Gyrus, posterior division', 'Precuneous Cortex', 'Cuneal Cortex', 'Frontal Orbital Cortex', 'Parahippocampal Gyrus, anterior division', 'Parahippocampal Gyrus, posterior division', 'Lingual Gyrus', 'Temporal Fusiform Cortex, anterior division', 'Temporal Fusiform Cortex, posterior division', 'Temporal Occipital Fusiform Cortex', 'Occipital Fusiform Gyrus', 'Frontal Operculum Cortex', 'Central Opercular Cortex', 'Parietal Operculum Cortex', 'Planum Polare', "Heschl's Gyrus (includes H1 and H2)", 'Planum Temporale', 'Supracalcarine Cortex', 'Occipital Pole']
+#         labeled_clusters = pd.DataFrame(columns=['t', 'Cluster ID', 'Label', 'Component Indices'])
         
-        for t in [1, 2.5, 5]:
-            clusters = correlation_tool.extract_clusters(t=t)
+#         for t in [1, 2.5, 5]:
+#             clusters = correlation_tool.extract_clusters(t=t)
             
-            for cluster_id, component_indices in clusters.items():
-                cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
-                labeled_clusters.loc[len(labeled_clusters)] = {'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}
-                # Add labeled_clusters to the session state
+#             for cluster_id, component_indices in clusters.items():
+#                 cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
+#                 labeled_clusters.loc[len(labeled_clusters)] = {'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}
+#                 # Add labeled_clusters to the session state
 
-        # This should only be created when the form is submitted, not every time the page is rendered.
-        submit_button = st.form_submit_button(label='Submit')
+#         # This should only be created when the form is submitted, not every time the page is rendered.
+#         submit_button = st.form_submit_button(label='Submit')
 
-        if submit_button:
-            st.session_state['labeled_clusters'] = labeled_clusters
+#         if submit_button:
+#             st.session_state['labeled_clusters'] = labeled_clusters
             
-            # Save CSV and automatically download the file after form submission
-            csv = labeled_clusters.to_csv(index=False)
-            b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-            href = f'<a href="data:file/csv;base64,{b64}" download="labeled_clusters.csv">Download CSV File</a>'
-            st.markdown(href, unsafe_allow_html=True)
+#             # Save CSV and automatically download the file after form submission
+#             csv = labeled_clusters.to_csv(index=False)
+#             b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+#             href = f'<a href="data:file/csv;base64,{b64}" download="labeled_clusters.csv">Download CSV File</a>'
+#             st.markdown(href, unsafe_allow_html=True)
