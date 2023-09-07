@@ -53,7 +53,7 @@ def measure_resources(func):
 def main():
     # Introduction and Background
     st.title("Subject-Level Functional Network Analysis")
-    st.sidebar.info(
+    st.info(
         """
         Welcome to the Subject-Level Functional Network Analysis App! This tool is designed to 
         analyze and visualize functional networks in fMRI data using various decomposition techniques.
@@ -66,7 +66,7 @@ def main():
         """
     )
     # Tutorial Steps
-    st.sidebar.info(
+    st.info(
         """
         **How to use this app:**
         1. **Select Parameters**: Adjust the clustering parameters and decomposition settings in the sidebar 
