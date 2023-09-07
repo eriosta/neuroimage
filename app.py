@@ -44,6 +44,10 @@ def measure_resources(func):
 # Add the @measure_resources decorator to functions you want to measure
 
 def main():
+
+    order_components = 20
+    correlation_tool = ComponentCorrelation(n_order=order_components)
+    
     # Introduction and Background
     st.info(
         """
