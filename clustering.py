@@ -11,10 +11,6 @@ import streamlit as st
 from nilearn.decomposition import CanICA, DictLearning
 from joblib import Parallel, delayed
 
-# HTML
-from PIL import Image
-import base64
-import io
 
 class ComponentCorrelation:
     def __init__(self, n_order, memory_level=2, cache_dir="nilearn_cache"):
@@ -159,19 +155,10 @@ class ComponentVisualization:
             plotting.plot_stat_map(component_img, bg_img=self.bg_img, cut_coords=[y_coord], display_mode='y', title=title_component, axes=ax, colorbar=False)
         plt.tight_layout()
         plt.show()
-
-        # Save the figure as an image file
-        fig.savefig(f"component_{self.subject_index}.png")
-        plt.close(fig)  # Close the figure to free up memory
-
+        
         if streamlit is not None:
             st.pyplot(plt)
-
-    def get_image_base64_string(self):
-        # Open the image file in a binary format, get the data and convert it to a base64 string
-        with open(f"component_{self.subject_index}.png", "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode('utf-8')
-        
+            
     def process_and_visualize(self,streamlit,decomposition_type):
         self.apply_decomposition(decomposition_type)
         self.visualize_components(streamlit)
