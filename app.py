@@ -188,10 +188,10 @@ def main():
                         cluster_label = st.selectbox(f"Select cluster label for Cluster {cluster_id} (t={t})", options=cluster_labels, key=f'location_{t}_{cluster_id}')
                         st.write(f"Cluster {cluster_id} (t={t}): {cluster_label}")
                         st.write(f"Components in Cluster {cluster_id} (t={t}): {component_indices}")
-                        submit_button = st.form_submit_button(label='Submit')
-                        if submit_button:
-                            labeled_clusters = labeled_clusters.append({'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}, ignore_index=True)
-                labeled_clusters.to_csv('labeled_clusters.csv', index=False)
-                st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
+                        labeled_clusters = labeled_clusters.append({'t': t, 'Cluster ID': cluster_id, 'Label': cluster_label, 'Component Indices': component_indices}, ignore_index=True)
+                submit_button = st.form_submit_button(label='Submit', key='SubmitButton')
+                if submit_button:
+                    labeled_clusters.to_csv('labeled_clusters.csv', index=False)
+                    st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
 if __name__ == "__main__":
     main()
