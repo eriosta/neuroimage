@@ -1,9 +1,9 @@
+import base64
 import streamlit as st
 import time  # Add the time module
 import pandas as pd  # Add the pandas library
 from clustering import *
 from nilearn import datasets
-import streamlit as st
 import nilearn.datasets as datasets
 import psutil
 import os
@@ -193,16 +193,15 @@ def main():
 
                 st.session_state['labeled_clusters'] = labeled_clusters
                         
-                submit_button = st.form_submit_button(label='Submit')
+                submit_button = st.form_submit_button(label='Save CSV')
                 
                 if submit_button:
                     st.session_state['labeled_clusters'] = labeled_clusters
-
-            # Save CSV and provide download button outside the form
-            if 'labeled_clusters' in st.session_state:
-                labeled_clusters = st.session_state['labeled_clusters']
-                labeled_clusters.to_csv('labeled_clusters.csv', index=False)
-                st.sidebar.download_button(label="Download labeled clusters", data=labeled_clusters.to_csv(index=False), file_name='labeled_clusters.csv', mime='text/csv')
+                    # Save CSV and automatically download the file after form submission
+                    csv = labeled_clusters.to_csv(index=False)
+                    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+                    href = f'<a href="data:file/csv;base64,{b64}" download="labeled_clusters.csv">Download CSV File</a>'
+                    st.markdown(href, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
