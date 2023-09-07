@@ -192,16 +192,18 @@ def main():
                         # Add labeled_clusters to the session state
 
                 st.session_state['labeled_clusters'] = labeled_clusters
-                        
-                submit_button = st.form_submit_button(label='Save CSV')
-                
-                if submit_button:
-                    st.session_state['labeled_clusters'] = labeled_clusters
+                # Check if all clusters have been labeled before allowing download
+                if not labeled_clusters['Label'].str.contains('').any():
                     # Save CSV and automatically download the file after form submission
                     csv = labeled_clusters.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
                     href = f'<a href="data:file/csv;base64,{b64}" download="labeled_clusters.csv">Download CSV File</a>'
                     st.markdown(href, unsafe_allow_html=True)
+                    
+                close_button = st.form_submit_button(label='Exit')
+                
+                if close_button:
+                    st.stop()
 
 
 if __name__ == "__main__":
