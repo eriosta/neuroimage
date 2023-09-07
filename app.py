@@ -170,7 +170,7 @@ def main():
         clusters_df = create_clusters_dataframe(clusters)
         display_clusters(clusters)
         process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key)
-
+    
     if 'label_clusters' in st.session_state:
         with st.form(key='my_form'):
             st.write("Fill out the form then press 'Submit' when you're done:")
@@ -190,12 +190,8 @@ def main():
 
             if submit_button:
                 st.session_state['labeled_clusters'] = labeled_clusters
-                
-                # Save CSV and automatically download the file after form submission
-                csv = labeled_clusters.to_csv(index=False)
-                b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-                href = f'<a href="data:file/csv;base64,{b64}" download="labeled_clusters.csv">Download CSV File</a>'
-                st.markdown(href, unsafe_allow_html=True)
+                st.write("Form submitted. Labeled clusters have been saved.")
+                st.dataframe(labeled_clusters)
 
 if __name__ == "__main__":
     main()
