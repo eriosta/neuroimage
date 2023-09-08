@@ -1,5 +1,4 @@
 import numpy as np
-
 from scipy.stats import pearsonr
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -137,30 +136,52 @@ class ComponentVisualization:
         decomposition_model.fit(fmri_subject)
         self.components_img_subject = decomposition_model.components_img_
 
-    def visualize_components(self,streamlit=None):
+    # def visualize_components(self,streamlit=None):
         
-        n_cols = len(self.component_indices)  # Determine number of columns by the length of the list of component indices
-        n_rows = 1
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(15 * n_cols, 15))
+    #     n_cols = len(self.component_indices)  # Determine number of columns by the length of the list of component indices
+    #     n_rows = 1
+    #     fig, axes = plt.subplots(n_rows, n_cols, figsize=(15 * n_cols, 15))
         
-        # If there's only one component, make sure axes is an array for consistency
-        if n_cols == 1:
-            axes = np.array([axes])
+    #     # If there's only one component, make sure axes is an array for consistency
+    #     if n_cols == 1:
+    #         axes = np.array([axes])
         
-        for idx, component in enumerate(self.component_indices):
-            ax = axes[idx]
-            component_img = image.index_img(self.components_img_subject, component)
-            y_coord = plotting.find_xyz_cut_coords(component_img)[1]
-            title_component = f'S{self.subject_index}C{component}'
-            plotting.plot_stat_map(component_img, bg_img=self.bg_img, cut_coords=[y_coord], display_mode='y', title=title_component, axes=ax, colorbar=False)
-        plt.tight_layout()
-        plt.show()
+    #     for idx, component in enumerate(self.component_indices):
+    #         ax = axes[idx]
+    #         component_img = image.index_img(self.components_img_subject, component)
+    #         y_coord = plotting.find_xyz_cut_coords(component_img)[1]
+    #         title_component = f'S{self.subject_index}C{component}'
+    #         plotting.plot_stat_map(component_img, bg_img=self.bg_img, cut_coords=[y_coord], display_mode='y', title=title_component, axes=ax, colorbar=False)
+    #     plt.tight_layout()
+    #     plt.show()
         
-        if streamlit is not None:
-            st.pyplot(plt)
+    #     if streamlit is not None:
+    #         st.pyplot(plt)
+
+    def visualize_components(self, streamlit=None):
             
+        coordinates_list = []  # Initialize an empty list to store the coordinates
+
+        for idx, component in enumerate(self.component_indices):
+            plt.figure(figsize=(15, 15))  # Create a new figure for each component
+            component_img = image.index_img(self.components_img_subject, component)
+            x_coord, y_coord, z_coord = plotting.find_xyz_cut_coords(component_img)
+            title_component = f'S{self.subject_index}C{component}'
+            plotting.plot_stat_map(component_img, bg_img=self.bg_img, cut_coords=(x_coord, y_coord, z_coord), display_mode='ortho', title=title_component, colorbar=False)
+            
+            coordinates_list.append((x_coord, y_coord, z_coord))  # Store the coordinates
+
+            if streamlit is not None:
+                st.pyplot(plt)  # Plot the figure in Streamlit
+            
+            plt.show()
+
+        return coordinates_list  # Return the list of coordinates
+
+    
     def process_and_visualize(self,streamlit,decomposition_type):
         self.apply_decomposition(decomposition_type)
-        self.visualize_components(streamlit)
+        coordinates_list = self.visualize_components(streamlit)
+        return coordinates_list
 
 
