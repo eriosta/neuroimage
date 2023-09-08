@@ -89,11 +89,7 @@ def main():
     )
 
     st.sidebar.title("Subject-Level Functional Network Analysis")
-    
-    with st.sidebar.expander("Cluster Labeling", expanded=True):
-        label_clusters = st.checkbox("Label clusters?", help="Check this box to label clusters.")
-        st.session_state['label_clusters'] = label_clusters
-        
+            
     # Grouping & Spacing: Organize controls in expandable sections
     with st.sidebar.expander("Clustering Parameters",expanded=True):
         t = st.slider(

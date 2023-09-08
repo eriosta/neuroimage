@@ -1,5 +1,4 @@
-# neuroimage
-# User Manual
+# NeuroImage
 
 ## Overview
 This application is designed to analyze and visualize functional networks in fMRI data using various decomposition techniques. The analysis is currently focused on a single subject's data from the ADHD200 dataset.
