@@ -15,6 +15,8 @@ import os
 
 import base64
 
+st.set_page_config(layout="wide")
+
 order_components = 20
 correlation_tool = ComponentCorrelation(n_order=order_components)
 
@@ -89,7 +91,7 @@ def main():
     )
 
     st.sidebar.title("Subject-Level Functional Network Analysis")
-            
+       
     # Grouping & Spacing: Organize controls in expandable sections
     with st.sidebar.expander("Clustering Parameters",expanded=True):
         t = st.slider(
@@ -123,21 +125,21 @@ def main():
         )
 
         if decomposition_type == 'Dictionary Learning':
-            st.info(
-                "**Dictionary Learning**:\n"
-                "- **How it works**: This technique learns a dictionary of basis functions (or 'atoms') which best represents the input data in a sparse manner.\n"
-                "- **Pros**: Good for extracting temporally independent networks. Often leads to more interpretable results.\n"
-                "- **Cons vs. ICA**: Dictionary Learning doesn't guarantee spatial or temporal independence and might be computationally intensive for large datasets."
-            )
-
+            if st.checkbox("Show more information for Dictionary Learning"):
+                st.info(
+                    "- **How it works**: This technique learns a dictionary of basis functions (or 'atoms') which best represents the input data in a sparse manner.\n"
+                    "- **Pros**: Good for extracting temporally independent networks. Often leads to more interpretable results.\n"
+                    "- **Cons vs. ICA**: Dictionary Learning doesn't guarantee spatial or temporal independence and might be computationally intensive for large datasets."
+                )
+        
         elif decomposition_type == 'ICA':
-            st.info(
-                "**ICA (Independent Component Analysis)**:\n"
-                "- **How it works**: Assumes fMRI signals are mixtures of independent non-Gaussian source signals. Decomposes data into such source signals maximizing their statistical independence.\n"
-                "- **Pros**: Widely used for its ability to extract spatially independent brain networks.\n"
-                "- **Cons vs. Dictionary Learning**: Some ICA components can be hard to interpret or might represent noise."
-            )
-    
+            if st.checkbox("Show more information for ICA"):
+                st.info(
+                    "- **How it works**: Assumes fMRI signals are mixtures of independent non-Gaussian source signals. Decomposes data into such source signals maximizing their statistical independence.\n"
+                    "- **Pros**: Widely used for its ability to extract spatially independent brain networks.\n"
+                    "- **Cons vs. Dictionary Learning**: Some ICA components can be hard to interpret or might represent noise."
+                )
+
     # Descriptions
     st.sidebar.markdown("After selecting parameters, click on **Run**. This will initiate the analysis based on your settings. The results will be visualized in the main panel.")
 
