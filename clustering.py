@@ -28,8 +28,11 @@ class ComponentCorrelation:
         """Fetch sample functional data for testing and denoise it."""
         dataset = datasets.fetch_adhd(n_subjects=1)
         
-        # Denoise using confounds
-        denoised_img = clean_img(dataset.func[0], confounds=dataset.confounds[0])
+        # Compute the mask from the functional data
+        mask_img = compute_epi_mask(dataset.func[0])
+        
+        # Denoise using confounds and the mask
+        denoised_img = clean_img(dataset.func[0], confounds=dataset.confounds[0], mask_img=mask_img)
         
         self.func_filename = [denoised_img]
         self.affine = self.func_filename[0].affine
@@ -128,8 +131,11 @@ class ComponentVisualization:
         dataset = datasets.fetch_adhd(n_subjects=1)
         confounds = dataset.confounds[0]
 
-        # Denoise the functional data
-        self.func_file = clean_img(func_file, confounds=confounds)
+        # Compute the mask from the functional data
+        mask_img = compute_epi_mask(func_file)
+
+        # Denoise the functional data using the mask
+        self.func_file = clean_img(func_file, confounds=confounds, mask_img=mask_img)
         self.component_indices = component_indices
         self.fwhm = fwhm
         self.subject_index = subject_index
