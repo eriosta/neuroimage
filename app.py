@@ -91,7 +91,7 @@ def main():
     )
 
     st.sidebar.title("Subject-Level Functional Network Analysis")
-       
+           
     # Grouping & Spacing: Organize controls in expandable sections
     with st.sidebar.expander("Clustering Parameters",expanded=True):
         t = st.slider(
@@ -99,12 +99,19 @@ def main():
             min_value=0.05, max_value=5.0, value=1.5, step=0.1, 
             help="Adjust the distance threshold used during hierarchical clustering. Lower values yield more clusters, capturing finer details of the functional networks, while higher values result in fewer clusters, possibly representing larger network structures."
         )
-
+    
         p_threshold = st.slider(
             "Pearson correlation p-value threshold", 
             min_value=0.01, max_value=1.0, value=0.01, step=0.01, 
             help="Set the significance level for Pearson correlation between time courses of regions/nodes in the functional network. Lower thresholds make correlations more stringent, potentially reducing false positives but may increase false negatives."
         )
+    
+        corr_coefficient = st.slider(
+            "Correlation coefficient cut off", 
+            min_value=-1.0, max_value=1.0, value=0.5, step=0.05, 
+            help="Set the cut off value for the correlation coefficient. A higher absolute value indicates stronger correlation. Use this to filter out weaker correlations when analyzing functional networks."
+        )
+
     
     with st.sidebar.expander("Decomposition",expanded=True):
         order_components = st.slider(
@@ -150,8 +157,8 @@ def main():
         return ComponentCorrelation(n_order=order_components)
 
     @measure_resources
-    def visualize_correlation(correlation_tool, p_threshold, decomposition_type, decomposition_key):
-        correlation_tool.visualize_component_correlation(streamlit=True, p_threshold=p_threshold, decomposition_type=decomposition_key[decomposition_type])
+    def visualize_correlation(correlation_tool, p_threshold, corr_coefficient, decomposition_type, decomposition_key):
+        correlation_tool.visualize_component_correlation(streamlit=True, p_threshold=p_threshold, corr_coefficient=corr_coefficient, decomposition_type=decomposition_key[decomposition_type])
         return correlation_tool.extract_clusters(t=t)
 
     def create_clusters_dataframe(clusters):
@@ -215,7 +222,7 @@ def main():
         st.write(f"Visualizing component correlation with t = {t}")
         
         correlation_tool = initialize_correlation_tool(order_components)
-        clusters = visualize_correlation(correlation_tool, p_threshold, decomposition_type, decomposition_key)
+        clusters = visualize_correlation(correlation_tool, p_threshold, corr_coefficient, decomposition_type, decomposition_key)
         clusters_df = create_clusters_dataframe(clusters)
         display_clusters(clusters)
         process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key)
