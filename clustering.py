@@ -6,7 +6,7 @@ import pandas as pd
 from nilearn import datasets
 from nilearn.decomposition import DictLearning, CanICA
 from nilearn.plotting import plot_stat_map, find_xyz_cut_coords
-from nilearn.image import index_img
+from nilearn.image import index_img, clean_img
 from nilearn.input_data import NiftiMasker
 from scipy.cluster.hierarchy import leaves_list, linkage, fcluster
 import streamlit as st
@@ -16,6 +16,8 @@ from nilearn.masking import compute_epi_mask
 from nilearn import plotting
 import altair as alt
 
+
+
 class ComponentCorrelation:
     def __init__(self, n_order, memory_level=2, cache_dir="nilearn_cache"):
         self.n_order = n_order
@@ -23,9 +25,13 @@ class ComponentCorrelation:
         self.memory_level = memory_level
 
     def _fetch_data(self):
-        """Fetch sample functional data for testing."""
+        """Fetch sample functional data for testing and denoise it."""
         dataset = datasets.fetch_adhd(n_subjects=1)
-        self.func_filename = [image.concat_imgs(dataset.func)]
+        
+        # Denoise using confounds
+        denoised_img = clean_img(dataset.func[0], confounds=dataset.confounds[0])
+        
+        self.func_filename = [image.concat_imgs(denoised_img)]
         self.affine = self.func_filename[0].affine
 
     def _perform_decomposition(self, decomposition_type='dict_learning'):
@@ -117,8 +123,13 @@ class ComponentCorrelation:
 
 
 class ComponentVisualization:
-    def __init__(self, func_file,n_components,component_indices, fwhm, subject_index, ordered_components=None):
-        self.func_file = func_file
+    def __init__(self, func_file, n_components, component_indices, fwhm, subject_index, ordered_components=None):
+        # Fetch dataset to get confounds
+        dataset = datasets.fetch_adhd(n_subjects=1)
+        confounds = dataset.confounds[0]
+
+        # Denoise the functional data
+        self.func_file = clean_img(func_file, confounds=confounds)
         self.component_indices = component_indices
         self.fwhm = fwhm
         self.subject_index = subject_index
