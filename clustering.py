@@ -31,7 +31,7 @@ class ComponentCorrelation:
         # Denoise using confounds
         denoised_img = clean_img(dataset.func[0], confounds=dataset.confounds[0])
         
-        self.func_filename = [image.concat_imgs(denoised_img)]
+        self.func_filename = [denoised_img]
         self.affine = self.func_filename[0].affine
 
     def _perform_decomposition(self, decomposition_type='dict_learning'):
