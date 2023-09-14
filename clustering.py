@@ -6,7 +6,7 @@ import pandas as pd
 from nilearn import datasets
 from nilearn.decomposition import DictLearning, CanICA
 from nilearn.plotting import plot_stat_map, find_xyz_cut_coords
-from nilearn.image import index_img, clean_img
+from nilearn.image import index_img
 from nilearn.input_data import NiftiMasker
 from scipy.cluster.hierarchy import leaves_list, linkage, fcluster
 import streamlit as st
@@ -16,8 +16,6 @@ from nilearn.masking import compute_epi_mask
 from nilearn import plotting
 import altair as alt
 
-
-
 class ComponentCorrelation:
     def __init__(self, n_order, memory_level=2, cache_dir="nilearn_cache"):
         self.n_order = n_order
@@ -25,16 +23,9 @@ class ComponentCorrelation:
         self.memory_level = memory_level
 
     def _fetch_data(self):
-        """Fetch sample functional data for testing and denoise it."""
+        """Fetch sample functional data for testing."""
         dataset = datasets.fetch_adhd(n_subjects=1)
-        
-        # Compute the mask from the functional data
-        mask_img = compute_epi_mask(dataset.func[0])
-        
-        # Denoise using confounds and the mask
-        denoised_img = clean_img(dataset.func[0], confounds=dataset.confounds[0], mask_img=mask_img)
-        
-        self.func_filename = [denoised_img]
+        self.func_filename = [image.concat_imgs(dataset.func)]
         self.affine = self.func_filename[0].affine
 
     def _perform_decomposition(self, decomposition_type='dict_learning'):
@@ -53,7 +44,7 @@ class ComponentCorrelation:
         results = decomposition_model.fit_transform(self.func_filename)
         self.components_img = results[0]
 
-    def _compute_correlation_matrix(self, p_threshold=0.01):
+    def _compute_correlation_matrix(self, p_threshold=0.01, corr_coefficient=0.5):
         self.correlation_matrix = np.zeros((self.n_order, self.n_order))
         self.results = []
         for i in range(self.n_order):
@@ -62,7 +53,9 @@ class ComponentCorrelation:
                 data_j = self.components_img[..., j]
                 if data_i.size > 1 and data_j.size > 1:
                     correlation, p_value = pearsonr(data_i.ravel(), data_j.ravel())
-                    if p_value < p_threshold:  # Check if p-value is significant based on user input
+                    
+                    # Check if p-value is significant and correlation is above the threshold
+                    if p_value < p_threshold and abs(correlation) > corr_coefficient:  
                         self.results.append({
                             'Component_1': i,
                             'Component_2': j,
@@ -71,6 +64,7 @@ class ComponentCorrelation:
                         })
                         self.correlation_matrix[i, j] = correlation
         self.correlation_matrix = np.nan_to_num(self.correlation_matrix)
+
 
     def _plot_heatmap(self, streamlit=None):
         diverging_cmap = plt.cm.RdBu_r
@@ -96,10 +90,10 @@ class ComponentCorrelation:
         df = df.sort_values(by='p_value')
         df.to_csv(filename, index=False)
 
-    def visualize_component_correlation(self,streamlit,p_threshold,decomposition_type):
+    def visualize_component_correlation(self,streamlit,p_threshold,corr_coefficient,decomposition_type):
         self._fetch_data()
         self._perform_decomposition(decomposition_type)
-        self._compute_correlation_matrix(p_threshold)
+        self._compute_correlation_matrix(p_threshold,corr_coefficient)
         self._plot_heatmap(streamlit)
         self.export_results_to_csv()
         
@@ -117,25 +111,25 @@ class ComponentCorrelation:
                 A dictionary with cluster identifiers as keys and lists of 
                 component indices as values.
         """
+        # 1. Identify components that have significant correlations based on the cut-offs
+        significant_components = set()
+        for result in self.results:
+            significant_components.add(result['Component_1'])
+            significant_components.add(result['Component_2'])
+    
         Z = linkage(self.correlation_matrix, method='average')
         cluster_assignments = fcluster(Z, t, criterion='distance')
         clusters = {}
         for idx, cluster_id in enumerate(cluster_assignments):
-            clusters.setdefault(cluster_id, []).append(idx)
+            if idx in significant_components:  # 2. Ensure only significant components are considered
+                clusters.setdefault(cluster_id, []).append(idx)
         return clusters
 
 
+
 class ComponentVisualization:
-    def __init__(self, func_file, n_components, component_indices, fwhm, subject_index, ordered_components=None):
-        # Fetch dataset to get confounds
-        dataset = datasets.fetch_adhd(n_subjects=1)
-        confounds = dataset.confounds[0]
-
-        # Compute the mask from the functional data
-        mask_img = compute_epi_mask(func_file)
-
-        # Denoise the functional data using the mask
-        self.func_file = clean_img(func_file, confounds=confounds, mask_img=mask_img)
+    def __init__(self, func_file,n_components,component_indices, fwhm, subject_index, ordered_components=None):
+        self.func_file = func_file
         self.component_indices = component_indices
         self.fwhm = fwhm
         self.subject_index = subject_index
@@ -206,4 +200,3 @@ class ComponentVisualization:
         self.apply_decomposition(decomposition_type)
         coordinates_list = self.visualize_components(streamlit)
         return coordinates_list
-
