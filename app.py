@@ -180,11 +180,11 @@ def main():
         progress_bar.progress(50)
         progress_text.text("MRI scans processed and cleaned...")
 
+        progress_bar.progress(75)
+        progress_text.text("Performing hierarchical clustering...")
+
         with st.expander("Components"):
             component_visualization.visualize_components(streamlit=True)
-
-        progress_bar.progress(75)
-        progress_text.text("Almost done...")
 
         col1, col2 = st.columns(2)
         with col1:
