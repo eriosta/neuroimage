@@ -3,7 +3,8 @@ import streamlit as st
 import time  # Add the time module
 import pandas as pd  # Add the pandas library
 
-from clustering import *
+# from clustering import *
+from clustering_v2 import *
 from encoder import *
 from progress import *
 
@@ -59,9 +60,6 @@ def measure_resources(func):
 # Add the @measure_resources decorator to functions you want to measure
 
 def main():
-
-    order_components = 20
-    correlation_tool = ComponentCorrelation(n_order=order_components)
 
     # Introduction and Background
     st.info(
@@ -153,83 +151,22 @@ def main():
     # Add "Run" button
     run_button = st.sidebar.button("Run")
     
-    def initialize_correlation_tool(order_components):
-        return ComponentCorrelation(n_order=order_components)
+    def initialize_component_visualization(n_subjects, n_components, fwhm):
+        return ComponentVisualization(n_subjects=n_subjects, n_components=n_components, fwhm=fwhm)
 
     @measure_resources
-    def visualize_correlation(correlation_tool, p_threshold, corr_coefficient, decomposition_type, decomposition_key):
-        correlation_tool.visualize_component_correlation(streamlit=True, p_threshold=p_threshold, corr_coefficient=corr_coefficient, decomposition_type=decomposition_key[decomposition_type])
-        return correlation_tool.extract_clusters(t=t)
+    def process_and_visualize(component_visualization):
+        component_visualization.process_and_visualize()
 
-    def create_clusters_dataframe(clusters):
-        clusters_df = pd.DataFrame([(cluster_id, component_indices) for cluster_id, component_indices in clusters.items()], columns=['Cluster', 'Component Indices'])
-        clusters_df['Component Indices'] = clusters_df['Component Indices'].apply(lambda x: ', '.join(map(str, x)))
-        return clusters_df
-
-    def display_clusters(clusters):
-        st.write("Clusters:")
-        for cluster_id, component_indices in clusters.items():
-            with st.expander(f"Cluster {cluster_id}"):
-                st.write("**Component Indices:**", ', '.join(map(str, component_indices)))
-
-    @measure_resources
-    def process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key):
-        # Define the list to hold our results
-        all_clusters_coordinates = []
-    
-        progress_updater = ProgressUpdater(len(clusters))
-    
-        for i, func_file in enumerate(func_filenames):
-            for cluster_id, component_indices in clusters.items():
-                st.info(f"Visualizing components for cluster {cluster_id}")
-    
-                cluster_coordinates = {'cluster_id': cluster_id, 'components': {}}
-                    
-                visualizer = ComponentVisualization(func_file, order_components, component_indices, fwhm, i)
-                    
-                visualization_results = visualizer.process_and_visualize(streamlit=True, decomposition_type=decomposition_key[decomposition_type])
-                    
-                for component, coords in zip(component_indices, visualization_results):
-                    coordinates_dict = {
-                        'x': coords[0],
-                        'y': coords[1],
-                        'z': coords[2]
-                    }
-                    cluster_coordinates['components'][component] = coordinates_dict
-    
-                all_clusters_coordinates.append(cluster_coordinates)
-    
-                st.warning(f"Done with cluster {cluster_id}. Moving to the next cluster.")
-                
-                progress_updater.update()  # Update the progress
-    
-            st.info("Done! Getting Coordinates...")
-    
-        # Saving the results as a JSON file locally
-        with open('clusters_coordinates.json', 'w') as json_file:
-            json.dump(all_clusters_coordinates, json_file, cls=NumpyEncoder)
-    
-        # Generate a link for the user to download the file
-        b64_file_data = get_file_content_as_string('clusters_coordinates.json')
-        href = f'<a href="data:file/json;base64,{b64_file_data}" download="clusters_coordinates.json">Download JSON File</a>'
-        st.markdown(href, unsafe_allow_html=True)
-        
-        st.write("Results saved to `clusters_coordinates.json`")
-        st.json(all_clusters_coordinates)
-    
     if run_button:
         st.header("Starting analysis...")
-        st.write(f"Visualizing component correlation with t = {t}")
         
-        correlation_tool = initialize_correlation_tool(order_components)
-        clusters = visualize_correlation(correlation_tool, p_threshold, corr_coefficient, decomposition_type, decomposition_key)
-        clusters_df = create_clusters_dataframe(clusters)
-        display_clusters(clusters)
-        process_and_display_images(func_filenames, clusters, order_components, fwhm, decomposition_type, decomposition_key)
+        component_visualization = initialize_component_visualization(n_subjects, order_components, fwhm)
+        process_and_visualize(component_visualization)
 
 if __name__ == "__main__":
     main()
-    
+
 
 # import json
 # import streamlit as st

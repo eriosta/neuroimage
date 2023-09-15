@@ -8,3 +8,4 @@ nilearn
 nibabel
 psutil
 joblib
+plotly
