@@ -31,6 +31,8 @@ from scipy.stats import pearsonr
 from nilearn import image
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
+
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -122,7 +124,7 @@ class ComponentVisualization:
             yaxis=dict(title='Intensity'),
             showlegend=True,
             autosize=False,
-            width=1400,  # Adjust the width of the plot
+            width=1300,  # Adjust the width of the plot
             height=600   # Adjust the height of the plot
         )
 
@@ -156,18 +158,35 @@ class ComponentVisualization:
         self.correlation_matrix = pd.DataFrame(self.correlation_matrix)
 
 
+    # def _plot_dendrogram(self, streamlit=None):
+    #     linked = linkage(self.correlation_matrix, 'average')
+    #     plt.figure(figsize=(10, 5))
+    #     dendrogram(linked, orientation='top', labels=self.correlation_matrix.columns.tolist(), distance_sort='descending', show_leaf_counts=True)
+    #     plt.show()
+        
+    #     if streamlit is not None:
+    #         st.pyplot()  # Display the dendrogram figure in Streamlit
+            
+    #     # Get the order of the components after hierarchical clustering
+    #     self.ordered_components = leaves_list(linkage(self.correlation_matrix, method='average'))
+
     def _plot_dendrogram(self, streamlit=None):
         linked = linkage(self.correlation_matrix, 'average')
-        plt.figure(figsize=(10, 5))
-        dendrogram(linked, orientation='top', labels=self.correlation_matrix.columns.tolist(), distance_sort='descending', show_leaf_counts=True)
-        plt.show()
+
+        # Create a dendrogram using plotly
+        fig = ff.create_dendrogram(
+            self.correlation_matrix, 
+            orientation='left', 
+            labels=self.correlation_matrix.columns.tolist()
+        )
+        fig.update_layout(width=800, height=600)
         
         if streamlit is not None:
-            st.pyplot()  # Display the dendrogram figure in Streamlit
-            
+            st.plotly_chart(fig)  # Display the dendrogram figure in Streamlit
+
         # Get the order of the components after hierarchical clustering
         self.ordered_components = leaves_list(linkage(self.correlation_matrix, method='average'))
-
+        
     def process_and_visualize(self,streamlit=True):
         self.preprocess_data()
         self.apply_decomposition()

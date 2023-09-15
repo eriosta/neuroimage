@@ -90,7 +90,7 @@ def main():
     st.sidebar.title("Subject-Level Functional Network Analysis")
            
     # Grouping & Spacing: Organize controls in expandable sections
-    with st.sidebar.expander("Clustering Parameters",expanded=True):
+    with st.sidebar.expander("Clustering Parameters",expanded=False):
         t = st.slider(
             "Hierarchical clustering distance threshold (t)", 
             min_value=0.05, max_value=5.0, value=1.5, step=0.1, 
