@@ -63,26 +63,26 @@ def main():
     # Introduction and Background
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.header("Step 1: Set parameters 🛠️")
         st.info(
             """
+            ## Step 1: Set parameters 🛠️
             In this step, you will adjust the clustering parameters and decomposition settings according to your requirements. 
             This includes setting the hierarchical clustering distance threshold, Pearson correlation p-value threshold, 
             correlation coefficient cut off, and the number of functional components. Once you have set the parameters, click 'Run'.
             """
         )
     with col2:
-        st.header("Step 2: Visualize components 🌍")
         st.info(
             """
+            ## Step 2: Visualize components 🌍
             After running the analysis, you will visualize the individual components' spatial maps with their corresponding timeseries. 
             This visualization will help you understand the distribution and behavior of the functional components in the brain.
             """
         )
     with col3:
-        st.header("Step 3: Analyze clusters 🔍")
         st.info(
             """
+            ## Step 3: Analyze clusters 🔍
             In this final step, you will evaluate multiple timeseries and perform hierarchical clustering of functional components 
             using Pearson correlation. This analysis will help you understand the relationships and similarities between different functional components.
             """
