@@ -157,29 +157,16 @@ class ComponentVisualization:
         self.correlation_matrix = np.nan_to_num(self.correlation_matrix)
         self.correlation_matrix = pd.DataFrame(self.correlation_matrix)
 
-
-    # def _plot_dendrogram(self, streamlit=None):
-    #     linked = linkage(self.correlation_matrix, 'average')
-    #     plt.figure(figsize=(10, 5))
-    #     dendrogram(linked, orientation='top', labels=self.correlation_matrix.columns.tolist(), distance_sort='descending', show_leaf_counts=True)
-    #     plt.show()
-        
-    #     if streamlit is not None:
-    #         st.pyplot()  # Display the dendrogram figure in Streamlit
-            
-    #     # Get the order of the components after hierarchical clustering
-    #     self.ordered_components = leaves_list(linkage(self.correlation_matrix, method='average'))
-
     def _plot_dendrogram(self, streamlit=None):
         linked = linkage(self.correlation_matrix, 'average')
 
         # Create a dendrogram using plotly
         fig = ff.create_dendrogram(
             self.correlation_matrix, 
-            orientation='left', 
+            orientation='right', 
             labels=self.correlation_matrix.columns.tolist()
         )
-        fig.update_layout(width=800, height=600)
+        fig.update_layout(width=1300, height=600)
         
         if streamlit is not None:
             st.plotly_chart(fig)  # Display the dendrogram figure in Streamlit
