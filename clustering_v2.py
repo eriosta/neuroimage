@@ -95,7 +95,7 @@ class ComponentVisualization:
             ax2.set(title=f'Time Series of Component {comp}', xlabel='Timepoints', ylabel='Intensity')
 
             plt.tight_layout()
-            if use_streamlit:
+            if streamlit:
                 st.pyplot(fig)
             else:
                 plt.show()
@@ -123,7 +123,7 @@ class ComponentVisualization:
 
         fig = go.Figure(data=traces, layout=layout)
         
-        if use_streamlit:
+        if streamlit:
             st.plotly_chart(fig)
         else:
             fig.show()
