@@ -66,24 +66,27 @@ def main():
         st.info(
             """
             ## Step 1: Set parameters 🛠️
-            - Adjust clustering parameters and decomposition settings.
+            - Adjust clustering parameters.
+            - Adjust decomposition settings.
             - Click **Run** after setting parameters.
             """
         )
     with col2:
         st.info(
             """
-            ## Step 2: Explore components 🌍
-            - Visualize individual components' spatial maps and corresponding timeseries post-analysis.
-            - Understand the distribution and behavior of the functional components in the brain.
+            ## Step 2: Spatial maps 🌍
+            - Visualize spatial maps of individual components.
+            - Visualize corresponding timeseries post-analysis.
+            - Understand functional components' distribution and behavior.
             """
         )
     with col3:
         st.info(
             """
             ## Step 3: Analyze clusters 🔍
-            - Evaluate hierarchical clustering of functional components using Pearson correlation.
-            - Understand relationships and similarities between different functional components.
+            - Evaluate clustering of functional components.
+            - Use Pearson correlation for evaluation.
+            - Understand relationships and similarities between components.
             """
         )
 
