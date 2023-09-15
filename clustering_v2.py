@@ -74,7 +74,7 @@ class ComponentVisualization:
         self.components_img = self.dict_learn.components_img_
 
 
-    def visualize_components(self):
+    def visualize_components(self, streamlit=True):
         os.makedirs(self.output_dir, exist_ok=True)
 
         for comp in range(self.n_components):
@@ -95,9 +95,12 @@ class ComponentVisualization:
             ax2.set(title=f'Time Series of Component {comp}', xlabel='Timepoints', ylabel='Intensity')
 
             plt.tight_layout()
-            plt.show()
+            if use_streamlit:
+                st.pyplot(fig)
+            else:
+                plt.show()
 
-    def visualize_timeseries_interactive(self, use_streamlit=False):
+    def visualize_timeseries_interactive(self, streamlit=True):
         traces = []
 
         for comp in range(self.n_components):
@@ -160,14 +163,14 @@ class ComponentVisualization:
         # Get the order of the components after hierarchical clustering
         self.ordered_components = leaves_list(linkage(self.correlation_matrix, method='average'))
 
-    def process_and_visualize(self):
+    def process_and_visualize(self,streamlit=True):
         self.preprocess_data()
         self.apply_decomposition()
-        self.visualize_timeseries_interactive()
-        # self.visualize_components()
+        self.visualize_timeseries_interactive(streamlit=streamlit)
+        self.visualize_components(streamlit=streamlit)
         
         self._compute_correlation_matrix()
-        self._plot_dendrogram()
+        self._plot_dendrogram(streamlit=streamlit)
 
 # analyzer = ComponentVisualization(n_subjects=1, n_components=50, fwhm=10)
 # analyzer.process_and_visualize()

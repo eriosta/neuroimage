@@ -161,7 +161,7 @@ def main():
         st.header("Starting analysis...")
         
         component_visualization = initialize_component_visualization(n_subjects, order_components, fwhm)
-        process_and_visualize(component_visualization)
+        process_and_visualize(component_visualization,streamlit=True)
 
 if __name__ == "__main__":
     main()
