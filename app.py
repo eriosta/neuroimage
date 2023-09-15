@@ -61,31 +61,34 @@ def measure_resources(func):
 def main():
 
     # Introduction and Background
-    st.info(
-        """
-        Welcome to the Subject-Level Functional Network Analysis App! This tool is designed to 
-        analyze and visualize functional networks in fMRI data using various decomposition techniques.
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info(
+            """
+            Welcome to the Subject-Level Functional Network Analysis App! This tool is designed to 
+            analyze and visualize functional networks in fMRI data using various decomposition techniques.
 
-        **Background**: Functional Magnetic Resonance Imaging (fMRI) provides insights into brain 
-        activity by detecting changes in blood flow. Through fMRI data decomposition, one can isolate 
-        individual networks or components of brain activity, leading to better understandings of cognitive 
-        processes. This analysis is currently focused on a single subject's data from the [ADHD200 dataset](https://nilearn.github.io/dev/modules/generated/nilearn.datasets.fetch_adhd.html).
+            **Background**: Functional Magnetic Resonance Imaging (fMRI) provides insights into brain 
+            activity by detecting changes in blood flow. Through fMRI data decomposition, one can isolate 
+            individual networks or components of brain activity, leading to better understandings of cognitive 
+            processes. This analysis is currently focused on a single subject's data from the [ADHD200 dataset](https://nilearn.github.io/dev/modules/generated/nilearn.datasets.fetch_adhd.html).
 
-        """
-    )
+            """
+        )
     # Tutorial Steps
-    st.info(
-        """
-        **How to use this app:**
-        1. **Select Parameters**: Adjust the clustering parameters and decomposition settings in the sidebar 
-           according to your requirements.
-        2. **Run Analysis**: After adjusting the settings, click the **Run** button. 
-        3. **View Results**: The results will be displayed on this main panel, where you'll see visualizations 
-           and other outputs based on your selected parameters.
+    with col2:
+        st.info(
+            """
+            **How to use this app:**
+            1. **Select Parameters**: Adjust the clustering parameters and decomposition settings in the sidebar 
+               according to your requirements.
+            2. **Run Analysis**: After adjusting the settings, click the **Run** button. 
+            3. **View Results**: The results will be displayed on this main panel, where you'll see visualizations 
+               and other outputs based on your selected parameters.
 
-        Start by adjusting the parameters in the sidebar to the left!
-        """
-    )
+            Start by adjusting the parameters in the sidebar to the left!
+            """
+        )
 
     st.sidebar.title("Subject-Level Functional Network Analysis")
            
@@ -182,11 +185,13 @@ def main():
         with st.expander("Component Visualization"):
             component_visualization.visualize_components(streamlit=True)
         
-        with st.expander("Dendrogram",expanded=True):
-            component_visualization.visualize_timeseries_interactive(streamlit=True)
-        
-        with st.expander("Dendrogram",expanded=True):
-            component_visualization._plot_dendrogram(streamlit=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            with st.expander("Dendrogram",expanded=True):
+                component_visualization.visualize_timeseries_interactive(streamlit=True)
+        with col2:
+            with st.expander("Dendrogram",expanded=True):
+                component_visualization._plot_dendrogram(streamlit=True)
 
 if __name__ == "__main__":
     main()

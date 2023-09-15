@@ -124,7 +124,7 @@ class ComponentVisualization:
             yaxis=dict(title='Intensity'),
             showlegend=True,
             autosize=False,
-            width=1300,  # Adjust the width of the plot
+            width=600,  # Adjust the width of the plot
             height=600   # Adjust the height of the plot
         )
 
@@ -163,10 +163,10 @@ class ComponentVisualization:
         # Create a dendrogram using plotly
         fig = ff.create_dendrogram(
             self.correlation_matrix, 
-            orientation='right', 
+            orientation='left', 
             labels=self.correlation_matrix.columns.tolist()
         )
-        fig.update_layout(width=1300, height=600)
+        fig.update_layout(width=600, height=600)
         
         if streamlit is not None:
             st.plotly_chart(fig)  # Display the dendrogram figure in Streamlit
