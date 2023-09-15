@@ -69,6 +69,7 @@ def main():
             - Adjust clustering parameters.
             - Adjust decomposition settings.
             - Click **Run** after setting parameters.
+            - **Note: Higher components will take longer to run**
             """
         )
     with col2:
