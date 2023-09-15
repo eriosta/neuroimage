@@ -166,9 +166,8 @@ class ComponentVisualization:
     def process_and_visualize(self,streamlit=True):
         self.preprocess_data()
         self.apply_decomposition()
-        self.visualize_timeseries_interactive(streamlit=streamlit)
         self.visualize_components(streamlit=streamlit)
-        
+        self.visualize_timeseries_interactive(streamlit=streamlit)
         self._compute_correlation_matrix()
         self._plot_dendrogram(streamlit=streamlit)
 
