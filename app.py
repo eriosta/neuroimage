@@ -170,20 +170,21 @@ def main():
     if run_button:
         progress_bar = st.progress(0)
         progress_text = st.empty()
-        progress_text.text("Starting analysis...")
+        progress_text.text("Feeding instructions...")
 
         component_visualization = initialize_component_visualization(n_subjects, order_components, fwhm)
         progress_bar.progress(25)
-        progress_text.text("Feeding instructions...")
+        progress_text.text("Working on spatial maps...")
 
         process_and_visualize(component_visualization,streamlit=True)
         progress_bar.progress(50)
-        progress_text.text("Data processed and cleaned...")
+        progress_text.text("MRI scans processed and cleaned...")
 
         with st.expander("Components"):
             component_visualization.visualize_components(streamlit=True)
-            progress_bar.progress(75)
-            progress_text.text("Components visualized...")
+
+        progress_bar.progress(75)
+        progress_text.text("Almost done...")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -193,6 +194,7 @@ def main():
             with st.expander("Dendrogram",expanded=True):
                 component_visualization._plot_dendrogram(streamlit=True)
         progress_bar.progress(100)
+
         progress_text.text("Analysis completed.")
 
 if __name__ == "__main__":
