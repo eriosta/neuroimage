@@ -167,6 +167,8 @@ def main():
         st.header("Starting analysis...")
         
         component_visualization = initialize_component_visualization(n_subjects, order_components, fwhm)
+
+        process_and_visualize(component_visualization,streamlit=True)
         
         # with st.container():
         #     st.header("Component Visualization")
