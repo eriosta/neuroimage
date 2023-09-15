@@ -168,25 +168,23 @@ def main():
     #     process_and_visualize(component_visualization,streamlit=True)
 
     if run_button:
-        st.header("Starting analysis...")
-        
+        progress_bar = st.progress(0)
+        progress_text = st.empty()
+        progress_text.text("Starting analysis...")
+
         component_visualization = initialize_component_visualization(n_subjects, order_components, fwhm)
+        progress_bar.progress(25)
+        progress_text.text("Feeding instructions...")
 
         process_and_visualize(component_visualization,streamlit=True)
-        
-        # with st.container():
-        #     st.header("Component Visualization")
-        #     component_visualization.visualize_components(streamlit=True)
-        
-        # with st.container():
-        #     st.header("Dendrogram")
-        #     component_visualization._plot_dendrogram(streamlit=True)
-        
-        # If you want to use expanders instead of containers
+        progress_bar.progress(50)
+        progress_text.text("Data processed and cleaned...")
+
         with st.expander("Components"):
             component_visualization.visualize_components(streamlit=True)
-            st.toast("All components visualized.")
-        
+            progress_bar.progress(75)
+            progress_text.text("Components visualized...")
+
         col1, col2 = st.columns(2)
         with col1:
             with st.expander("Timeseries",expanded=True):
@@ -194,6 +192,8 @@ def main():
         with col2:
             with st.expander("Dendrogram",expanded=True):
                 component_visualization._plot_dendrogram(streamlit=True)
+        progress_bar.progress(100)
+        progress_text.text("Analysis completed.")
 
 if __name__ == "__main__":
     main()
