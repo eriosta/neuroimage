@@ -61,32 +61,30 @@ def measure_resources(func):
 def main():
 
     # Introduction and Background
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
+        st.header("Step 1: Set parameters 🛠️")
         st.info(
             """
-            Welcome to the Subject-Level Functional Network Analysis App! This tool is designed to 
-            analyze and visualize functional networks in fMRI data using various decomposition techniques.
-
-            **Background**: Functional Magnetic Resonance Imaging (fMRI) provides insights into brain 
-            activity by detecting changes in blood flow. Through fMRI data decomposition, one can isolate 
-            individual networks or components of brain activity, leading to better understandings of cognitive 
-            processes. This analysis is currently focused on a single subject's data from the [ADHD200 dataset](https://nilearn.github.io/dev/modules/generated/nilearn.datasets.fetch_adhd.html).
-
+            In this step, you will adjust the clustering parameters and decomposition settings according to your requirements. 
+            This includes setting the hierarchical clustering distance threshold, Pearson correlation p-value threshold, 
+            correlation coefficient cut off, and the number of functional components. Once you have set the parameters, click 'Run'.
             """
         )
-    # Tutorial Steps
     with col2:
+        st.header("Step 2: Visualize components 🌍")
         st.info(
             """
-            **How to use this app:**
-            1. **Select Parameters**: Adjust the clustering parameters and decomposition settings in the sidebar 
-               according to your requirements.
-            2. **Run Analysis**: After adjusting the settings, click the **Run** button. 
-            3. **View Results**: The results will be displayed on this main panel, where you'll see visualizations 
-               and other outputs based on your selected parameters.
-
-            Start by adjusting the parameters in the sidebar to the left!
+            After running the analysis, you will visualize the individual components' spatial maps with their corresponding timeseries. 
+            This visualization will help you understand the distribution and behavior of the functional components in the brain.
+            """
+        )
+    with col3:
+        st.header("Step 3: Analyze clusters 🔍")
+        st.info(
+            """
+            In this final step, you will evaluate multiple timeseries and perform hierarchical clustering of functional components 
+            using Pearson correlation. This analysis will help you understand the relationships and similarities between different functional components.
             """
         )
 
