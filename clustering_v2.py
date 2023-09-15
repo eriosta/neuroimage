@@ -122,8 +122,8 @@ class ComponentVisualization:
             yaxis=dict(title='Intensity'),
             showlegend=True,
             autosize=False,
-            width=1200,  # Adjust the width of the plot
-            height=800   # Adjust the height of the plot
+            width=1400,  # Adjust the width of the plot
+            height=600   # Adjust the height of the plot
         )
 
         fig = go.Figure(data=traces, layout=layout)
