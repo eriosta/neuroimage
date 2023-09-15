@@ -125,7 +125,8 @@ class ComponentVisualization:
             showlegend=True,
             autosize=False,
             width=600,  # Adjust the width of the plot
-            height=600   # Adjust the height of the plot
+            height=600,   # Adjust the height of the plot
+            font=dict(size=12)  # Increase font size
         )
 
         fig = go.Figure(data=traces, layout=layout)
@@ -166,7 +167,7 @@ class ComponentVisualization:
             orientation='left', 
             labels=self.correlation_matrix.columns.tolist()
         )
-        fig.update_layout(width=600, height=600)
+        fig.update_layout(width=600, height=600, font=dict(size=12))  # Increase font size
         
         if streamlit is not None:
             st.plotly_chart(fig)  # Display the dendrogram figure in Streamlit

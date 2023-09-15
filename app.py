@@ -182,12 +182,12 @@ def main():
         #     component_visualization._plot_dendrogram(streamlit=True)
         
         # If you want to use expanders instead of containers
-        with st.expander("Component Visualization"):
+        with st.expander("Components"):
             component_visualization.visualize_components(streamlit=True)
         
         col1, col2 = st.columns(2)
         with col1:
-            with st.expander("Dendrogram",expanded=True):
+            with st.expander("Timeseries",expanded=True):
                 component_visualization.visualize_timeseries_interactive(streamlit=True)
         with col2:
             with st.expander("Dendrogram",expanded=True):
