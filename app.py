@@ -154,8 +154,8 @@ def main():
         return ComponentVisualization(n_subjects=n_subjects, n_components=n_components, fwhm=fwhm)
 
     @measure_resources
-    def process_and_visualize(component_visualization):
-        component_visualization.process_and_visualize()
+    def process_and_visualize(component_visualization,streamlit):
+        component_visualization.process_and_visualize(streamlit=streamlit)
 
     if run_button:
         st.header("Starting analysis...")
