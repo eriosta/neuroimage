@@ -177,10 +177,16 @@ class ComponentVisualization:
         
     def process_and_visualize(self,streamlit=True):
         self.preprocess_data()
+        if streamlit:
+            st.toast("Data denoised of nuissance confounds.")
         self.apply_decomposition()
+        if streamlit:
+            st.toast("Decomposition completed.")
         # self.visualize_components(streamlit=streamlit)
         # self.visualize_timeseries_interactive(streamlit=streamlit)
         self._compute_correlation_matrix()
+        if streamlit:
+            st.toast("Correlation matrix generated.")
         # self._plot_dendrogram(streamlit=streamlit)
 
 # analyzer = ComponentVisualization(n_subjects=1, n_components=50, fwhm=10)

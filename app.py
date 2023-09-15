@@ -185,6 +185,7 @@ def main():
         # If you want to use expanders instead of containers
         with st.expander("Components"):
             component_visualization.visualize_components(streamlit=True)
+            st.toast("All components visualized.")
         
         col1, col2 = st.columns(2)
         with col1:
