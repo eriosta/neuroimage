@@ -32,6 +32,8 @@ from nilearn import image
 import pandas as pd
 import plotly.graph_objects as go
 
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 class ComponentVisualization:
     def __init__(self, n_subjects=1, n_components=5, fwhm=10, output_dir='component_images'):
         self.n_subjects = n_subjects
@@ -118,7 +120,10 @@ class ComponentVisualization:
             title='Time Series of Components',
             xaxis=dict(title='Timepoints'),
             yaxis=dict(title='Intensity'),
-            showlegend=True
+            showlegend=True,
+            autosize=False,
+            width=1200,  # Adjust the width of the plot
+            height=800   # Adjust the height of the plot
         )
 
         fig = go.Figure(data=traces, layout=layout)
