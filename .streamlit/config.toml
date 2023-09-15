@@ -1,0 +1,13 @@
+[global]
+# Change the theme to dark mode
+theme = "dark"
+
+[theme]
+primaryColor = "#E694FF"
+backgroundColor = "#00172B"
+secondaryBackgroundColor = "#002b4c"
+textColor = "#ffffff"
+font = "sans serif"
+
+[deprecation]
+showPyplotGlobalUse = false
